@@ -10,16 +10,30 @@ app.use(express())
 
 
 const uri = `mongodb+srv://${process.env.USER_NAME_KEY}:${process.env.USER_SUCORATY_KEY}@cluster0.c8jqolf.mongodb.net/?retryWrites=true&w=majority`;
+console.log(uri)
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-async function run (){
-const collection = client.db('service').collection('products')
+async function run() {
+    try {
+        const serviceCollection = client.db('assingment-11').collection('serves')
+        app.get('/serves', async (req, res) => {
+            const query = {};
+            const cursor = serviceCollection.find(query);
+            const servises = await cursor.limit(3).toArray();
+            res.send(servises);
+
+        })
+    }
+    catch {
+
+    }
 }
-run().catch(err =>console.log(err))
+run().catch(err => console.log(err))
 
 
-app.get('/',(req, res)=>{
+app.get('/', (req, res) => {
     res.send("Assingment 11 server renning")
 });
-app.listen(port,()=>{
+
+app.listen(port, () => {
     console.log(`renning port:${port}`)
 })
