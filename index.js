@@ -6,7 +6,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
 app.use(cors());
-app.use(express())
+app.use(express.json())
 
 
 const uri = `mongodb+srv://${process.env.USER_NAME_KEY}:${process.env.USER_SUCORATY_KEY}@cluster0.c8jqolf.mongodb.net/?retryWrites=true&w=majority`;
@@ -15,6 +15,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         const serviceCollection = client.db('assingment-11').collection('serves')
+        const orderCalaction = client.db('assingment-11').collection('orders')
         app.get('/serves', async (req, res) => {
             const query = {};
             const cursor = serviceCollection.find(query);
@@ -40,6 +41,12 @@ async function run() {
             const query = {_id:ObjectId(id)}
             const selectedService = await serviceCollection.findOne(query)
             res.send(selectedService) 
+        })
+        app.post('/order',async (req, res)=>{
+            const order = req.body;
+            console.log(order)
+            const postOrder = await orderCalaction.insertOne(order)
+            res.send(postOrder)
         })
     }
     catch {
