@@ -26,34 +26,81 @@ async function run() {
         app.get('/moreserves', async (req, res) => {
             const page = parseInt(req.query.page);
             const size = parseInt(req.query.size);
-            console.log(page,size)
-
             const query = {};
             const cursor = serviceCollection.find(query);
-            const servic = await cursor.skip(page*size).limit(size).toArray();
+            const servic = await cursor.skip(page * size).limit(size).toArray();
             const count = await serviceCollection.estimatedDocumentCount()
-            res.send({count,servic});
+            res.send({ count, servic });
 
         })
-        app.get('/serves/:id',async(req, res)=>{
+        app.get('/serves/:id', async (req, res) => {
             const id = req.params.id;
-            console.log(id)
-            const query = {_id:ObjectId(id)}
+            const query = { _id: ObjectId(id) }
             const selectedService = await serviceCollection.findOne(query)
-            res.send(selectedService) 
+            res.send(selectedService)
         })
-        app.post('/order',async (req, res)=>{
+        app.post('/order', async (req, res) => {
             const order = req.body;
-            console.log(order)
             const postOrder = await orderCalaction.insertOne(order)
             res.send(postOrder)
         })
-        app.get('/revew',async (req, res)=>{
-            const query = {};
+        app.get('/revew', async (req, res) => {
+            var query = {};
+            if (req.query.email) {
+                query = {
+                    email: req.query.email
+                }
+            }
             const cursor = orderCalaction.find(query);
             const orderRevew = await cursor.toArray();
             res.send(orderRevew)
         })
+        app.patch('/order/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const status = req.body.status;
+            const query = { _id: ObjectId(id) }
+            const updateDoc = {
+                $set: {
+                    status: status
+                }
+            }
+            const result = await orderCalaction.updateOne(query, updateDoc);
+            res.send(result)
+        })
+        app.put('/update/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const update = req.body;
+            const option = {upsert:true}
+            const updateDoc = {
+                $set:{ 
+                    castomerName:update.castomerName,
+                    address:update.address,
+                    phone:update.phone,
+                    castomerText:update.castomerText,
+                    email:update.email,
+                    img:update.img,
+                    ServicName:update.ServicName,
+                    id:update.id
+                }
+            }
+            const result = await orderCalaction.updateOne(query, updateDoc,option);
+            res.send(result)
+        })
+        app.get('/update/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const selectedService = await orderCalaction.findOne(query)
+            res.send(selectedService)
+        })
+        app.delete('/order/:id',async(req, res)=>{
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)}
+            const resutl = await orderCalaction.deleteOne(query)
+            res.send(resutl)
+            })
+        
     }
     catch {
 
