@@ -48,6 +48,12 @@ async function run() {
             const postOrder = await orderCalaction.insertOne(order)
             res.send(postOrder)
         })
+        app.get('/revew',async (req, res)=>{
+            const query = {};
+            const cursor = orderCalaction.find(query);
+            const orderRevew = await cursor.toArray();
+            res.send(orderRevew)
+        })
     }
     catch {
 
