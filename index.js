@@ -16,10 +16,18 @@ async function run() {
     try {
         const serviceCollection = client.db('assingment-11').collection('serves')
         const orderCalaction = client.db('assingment-11').collection('orders')
+        const latastShortCalaction = client.db('assingment-11').collection('latast short')
         app.get('/serves', async (req, res) => {
             const query = {};
             const cursor = serviceCollection.find(query);
             const servises = await cursor.limit(3).toArray();
+            res.send(servises);
+
+        })
+        app.get('/latastShort', async (req, res) => {
+            const query = {};
+            const cursor = latastShortCalaction.find(query);
+            const servises = await cursor.toArray();
             res.send(servises);
 
         })
